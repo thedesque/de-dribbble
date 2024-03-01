@@ -1,0 +1,7 @@
+CLIENT_ID=someclientid
+CLIENT_SECRET=someclientsecret
+REDIRECT_URL=http://localhost:9000/oauth/callback
+
+# if true, grants full access to create, update, and delete shots and attachments.
+# if false, grants read-only access to public information.
+WRITE_SCOPE=false # true or false

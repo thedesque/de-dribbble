@@ -3,10 +3,15 @@ package dribbble
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
+
+	"github.com/fatih/color"
 )
 
 // Client struct
@@ -20,8 +25,8 @@ type Client struct {
 	Attachments *Attachments
 }
 
-// New returns new instance of Dribbble client
-func New(config *Config) *Client {
+// NewClient returns new instance of Dribbble client
+func NewClient(config *Config) *Client {
 	c := &Client{Config: config}
 	c.User = &User{c}
 	c.Projects = &Projects{c}
@@ -32,7 +37,7 @@ func New(config *Config) *Client {
 	return c
 }
 
-func (c *Client) call(method string, path string, body interface{}) (io.ReadCloser, error) {
+func (c *Client) call(method string, path string, body any) (io.ReadCloser, error) {
 	ep := "https://api.dribbble.com/v2" + path
 	u, err := url.Parse(ep)
 	if err != nil {
@@ -56,18 +61,52 @@ func (c *Client) call(method string, path string, body interface{}) (io.ReadClos
 	req.Header.Set("Authorization", "Bearer "+c.Token.AccessToken)
 	req.Header.Set("Content-Type", "application/json")
 
-	r, _, err := c.do(req)
-	return r, err
+	dribResp, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if dribResp != nil && c.Flags.Verbose {
+		grey := color.New(color.FgHiBlack).SprintFunc()
+		s := fmt.Sprintf("RateLimit-> %d, RateLimitRemaining-> %d, RateLimitReset-> %s",
+			dribResp.RateLimit,
+			dribResp.RateLimitRemaining,
+			time.Unix(dribResp.RateLimitReset, 0).Format("01/02/2006 03:04 PM MST"),
+		)
+		fmt.Println(grey(s))
+	}
+
+	return dribResp.Body, err
 }
 
-func (c *Client) do(req *http.Request) (io.ReadCloser, int64, error) {
+type DribbbleResponse struct {
+	Body               io.ReadCloser
+	StatusCode         int
+	RateLimit          int
+	RateLimitRemaining int
+	RateLimitReset     int64
+}
+
+func (c *Client) do(req *http.Request) (*DribbbleResponse, error) {
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
+	}
+
+	dribResp := &DribbbleResponse{
+		Body:       res.Body,
+		StatusCode: res.StatusCode,
+	}
+
+	// extract rate limit headers
+	dribResp.RateLimit, _ = strconv.Atoi(res.Header.Get("X-RateLimit-Limit"))
+	dribResp.RateLimitRemaining, _ = strconv.Atoi(res.Header.Get("X-RateLimit-Remaining"))
+	if reset, _ := strconv.ParseInt(res.Header.Get("X-RateLimit-Reset"), 10, 64); reset != 0 {
+		dribResp.RateLimitReset = reset
 	}
 
 	if res.StatusCode < 400 {
-		return res.Body, res.ContentLength, err
+		return dribResp, nil
 	}
 
 	defer res.Body.Close()
@@ -79,12 +118,12 @@ func (c *Client) do(req *http.Request) (io.ReadCloser, int64, error) {
 
 	ct := res.Header.Get("Content-Type")
 	if strings.Contains(ct, "text/html") {
-		return nil, 0, e
+		return nil, e
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(e); err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return nil, 0, e
+	return nil, e
 }

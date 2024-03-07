@@ -2,21 +2,28 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	dribbble "github.com/thedesque.com/desqfolio"
 )
 
 func main() {
-	token := dribbble.Auth()
+	cfg := dribbble.NewConfig()
+	if err := dribbble.OauthStart(cfg); err != nil {
+		log.Fatal(err)
+	}
 
-	cfg := dribbble.NewConfig(token)
-	d := dribbble.New(cfg)
+	c := dribbble.NewClient(cfg)
 
 	// get currently logged in user
-	user, _ := d.User.GetUser()
+	user, err := c.User.GetUser()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("%v", user)
 
 	// get all shots from logged in user
-	shots, _ := d.Shots.GetShots()
-	fmt.Printf("%v", shots)
+	// shots, _ := client.Shots.GetShots()
+	// fmt.Printf("%v", shots)
 }

@@ -19,9 +19,9 @@ type ShotOut struct {
 	Width       int    `json:"width"`
 	Height      int    `json:"height"`
 	Images      struct {
-		Hidpi  interface{} `json:"hidpi"`
-		Normal string      `json:"normal"`
-		Teaser string      `json:"teaser"`
+		Hidpi  any    `json:"hidpi"`
+		Normal string `json:"normal"`
+		Teaser string `json:"teaser"`
 	} `json:"images"`
 	PublishedAt time.Time `json:"published_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
@@ -84,9 +84,9 @@ type PopularShotOut struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Images      struct {
-		Hidpi  interface{} `json:"hidpi"`
-		Normal string      `json:"normal"`
-		Teaser string      `json:"teaser"`
+		Hidpi  any    `json:"hidpi"`
+		Normal string `json:"normal"`
+		Teaser string `json:"teaser"`
 	} `json:"images"`
 	PublishedAt time.Time `json:"published_at"`
 	HTMLURL     string    `json:"html_url"`

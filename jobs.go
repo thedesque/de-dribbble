@@ -14,27 +14,27 @@ type Jobs struct {
 
 // JobOut schema
 type JobOut struct {
-	ID               int         `json:"id"`
-	OrganizationName string      `json:"organization_name"`
-	Title            string      `json:"title"`
-	Location         string      `json:"location"`
-	URL              string      `json:"url"`
-	CreatedAt        time.Time   `json:"created_at"`
-	UpdatedAt        time.Time   `json:"updated_at"`
-	Active           bool        `json:"active"`
-	StartsAt         time.Time   `json:"starts_at"`
-	EndsAt           time.Time   `json:"ends_at"`
-	Team             interface{} `json:"team"`
+	ID               int       `json:"id"`
+	OrganizationName string    `json:"organization_name"`
+	Title            string    `json:"title"`
+	Location         string    `json:"location"`
+	URL              string    `json:"url"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	Active           bool      `json:"active"`
+	StartsAt         time.Time `json:"starts_at"`
+	EndsAt           time.Time `json:"ends_at"`
+	Team             any       `json:"team"`
 }
 
 // JobIn schema
 type JobIn struct {
-	OrganizationName string      `json:"organization_name"`
-	Title            string      `json:"title"`
-	Location         string      `json:"location"`
-	URL              string      `json:"url"`
-	Active           bool        `json:"active"`
-	Team             interface{} `json:"team"`
+	OrganizationName string `json:"organization_name"`
+	Title            string `json:"title"`
+	Location         string `json:"location"`
+	URL              string `json:"url"`
+	Active           bool   `json:"active"`
+	Team             any    `json:"team"`
 }
 
 // GetJob with given id

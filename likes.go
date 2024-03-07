@@ -20,9 +20,9 @@ type LikeOut struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
 		Images      struct {
-			Hidpi  interface{} `json:"hidpi"`
-			Normal string      `json:"normal"`
-			Teaser string      `json:"teaser"`
+			Hidpi  any    `json:"hidpi"`
+			Normal string `json:"normal"`
+			Teaser string `json:"teaser"`
 		} `json:"images"`
 		PublishedAt time.Time `json:"published_at"`
 		HTMLURL     string    `json:"html_url"`

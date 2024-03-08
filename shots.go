@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 // Shots instance
@@ -120,57 +118,52 @@ func (c *Shots) GetShots() (out *[]ShotOut, err error) {
 
 // String method to convert ShotOut struct into a human-readable string,
 // with colored keys and omitting empty values.
-func (s ShotOut) String() string {
+func (s *ShotOut) String() string {
 	var sb strings.Builder
-	grey := color.New(color.FgHiBlack).SprintFunc()
 
-	writeIfNotEmpty := func(key, value string) {
-		if value != "" {
-			sb.WriteString(fmt.Sprintf("%s: %s\n", grey(key), value))
-		}
-	}
-
-	writeIfNotEmpty("ID", fmt.Sprintf("%d", s.ID))
-	writeIfNotEmpty("Title", s.Title)
-	writeIfNotEmpty("Description", s.Description)
-	writeIfNotEmpty("Dimensions", fmt.Sprintf("%dx%d", s.Width, s.Height))
-	writeIfNotEmpty("Published At", s.PublishedAt.Format("Jan 2, 2006"))
-	writeIfNotEmpty("Updated At", s.UpdatedAt.Format("Jan 2, 2006"))
-	writeIfNotEmpty("HTML URL", s.HTMLURL)
-	writeIfNotEmpty("Animated", fmt.Sprintf("%t", s.Animated))
-	if len(s.Tags) > 0 {
-		writeIfNotEmpty("Tags", strings.Join(s.Tags, ", "))
-	}
+	writeTitleString(&sb, "Shot")
+	writeIfNotEmpty(&sb, "ID", fmt.Sprintf("%d", s.ID))
+	writeIfNotEmpty(&sb, "Title", s.Title)
+	writeIfNotEmpty(&sb, "Description", s.Description)
+	writeIfNotEmpty(&sb, "Dimensions", fmt.Sprintf("%dx%d", s.Width, s.Height))
+	writeIfNotEmpty(&sb, "HTML URL", s.HTMLURL)
+	writeIfNotEmpty(&sb, "Image - HiDPI:", s.Images.Hidpi.(string))
+	writeIfNotEmpty(&sb, "Image - Normal:", s.Images.Normal)
+	writeIfNotEmpty(&sb, "Image - Teaser:", s.Images.Teaser)
+	writeIfNotEmpty(&sb, "Published At", s.PublishedAt.Format("Jan 2, 2006"))
+	writeIfNotEmpty(&sb, "Updated At", s.UpdatedAt.Format("Jan 2, 2006"))
+	writeIfNotEmpty(&sb, "Animated", fmt.Sprintf("%t", s.Animated))
+	writeIfNotEmpty(&sb, "Tags:", formatTags(s.Tags))
 
 	if len(s.Attachments) > 0 {
-		sb.WriteString(fmt.Sprintf("%s:\n", grey("Attachments")))
+		writeTitleString(&sb, "Attachments")
 		for _, attachment := range s.Attachments {
 			attachmentDetails := fmt.Sprintf("ID: %d, URL: %s, Size: %d bytes", attachment.ID, attachment.URL, attachment.Size)
-			writeIfNotEmpty("-", attachmentDetails)
+			writeIfNotEmpty(&sb, "-", attachmentDetails)
 		}
 	}
 
 	if len(s.Projects) > 0 {
-		sb.WriteString(fmt.Sprintf("%s:\n", grey("Projects")))
+		writeTitleString(&sb, "Projects")
 		for _, project := range s.Projects {
 			projectDetails := fmt.Sprintf("Name: %s, Description: %s, Shots Count: %d", project.Name, project.Description, project.ShotsCount)
-			writeIfNotEmpty("-", projectDetails)
+			writeIfNotEmpty(&sb, "-", projectDetails)
 		}
 	}
 
 	if s.Team.ID != 0 {
-		sb.WriteString(fmt.Sprintf("%s:\n", grey("Team")))
+		writeTitleString(&sb, "Team")
 		teamDetails := fmt.Sprintf("Name: %s (%s), Bio: %s", s.Team.Name, s.Team.Login, s.Team.Bio)
-		writeIfNotEmpty("-", teamDetails)
+		writeIfNotEmpty(&sb, "-", teamDetails)
 	}
 
 	if s.Video.ID != 0 {
-		sb.WriteString(fmt.Sprintf("%s:\n", grey("Video")))
+		writeTitleString(&sb, "Video")
 		videoDetails := fmt.Sprintf("Duration: %d seconds, URL: %s", s.Video.Duration, s.Video.URL)
-		writeIfNotEmpty("-", videoDetails)
+		writeIfNotEmpty(&sb, "-", videoDetails)
 	}
 
-	writeIfNotEmpty("Low Profile", fmt.Sprintf("%t", s.LowProfile))
+	writeIfNotEmpty(&sb, "Low Profile", fmt.Sprintf("%t", s.LowProfile))
 
 	return sb.String()
 }
@@ -178,7 +171,7 @@ func (s ShotOut) String() string {
 // ------------------------------------------------------------------------
 
 // GetPopularShots overall
-// Note: This is available only to select applications with our approval
+// Note: This is available only to select applications with dribbble approval
 func (c *Shots) GetPopularShots() (out *[]PopularShotOut, err error) {
 	body, err := c.call("GET", "/popular_shots", nil)
 	if err != nil {
@@ -188,6 +181,23 @@ func (c *Shots) GetPopularShots() (out *[]PopularShotOut, err error) {
 
 	err = json.NewDecoder(body).Decode(&out)
 	return
+}
+
+func (s *PopularShotOut) String() string {
+	var sb strings.Builder
+
+	writeTitleString(&sb, "Popular Shot")
+	writeIfNotEmpty(&sb, "ID", fmt.Sprintf("%d", s.ID))
+	writeIfNotEmpty(&sb, "Title", s.Title)
+	writeIfNotEmpty(&sb, "Description", s.Description)
+	writeIfNotEmpty(&sb, "Dimensions", fmt.Sprintf("%dx%d", s.Width, s.Height))
+	writeIfNotEmpty(&sb, "HTML URL", s.HTMLURL)
+	writeIfNotEmpty(&sb, "Image - HiDPI:", s.Images.Hidpi.(string))
+	writeIfNotEmpty(&sb, "Image - Normal:", s.Images.Normal)
+	writeIfNotEmpty(&sb, "Image - Teaser:", s.Images.Teaser)
+	writeIfNotEmpty(&sb, "Published At", s.PublishedAt.Format("Jan 2, 2006"))
+
+	return sb.String()
 }
 
 // ------------------------------------------------------------------------

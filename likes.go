@@ -44,7 +44,7 @@ type LikedShotOut struct {
 }
 
 // GetLikes returns list of authenticated user’s liked shots
-// Note: This is available only to select applications with our approval
+// Note: This is available only to select applications with dribbble approval
 func (c *Likes) GetLikes() (out *[]LikeOut, err error) {
 	body, err := c.call("GET", "/user/likes", nil)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *Likes) GetLikes() (out *[]LikeOut, err error) {
 }
 
 // GetShotLike checks if you like a shot
-// Note: This is available only to select applications with our approval
+// Note: This is available only to select applications with dribbble approval
 func (c *Likes) GetShotLike(id int) (out *LikedShotOut, err error) {
 	body, err := c.call("GET", fmt.Sprintf("/shots/%d/like", id), nil)
 	if err != nil {
@@ -70,7 +70,7 @@ func (c *Likes) GetShotLike(id int) (out *LikedShotOut, err error) {
 }
 
 // LikeShot with given id
-// Note: This is available only to select applications with our approval
+// Note: This is available only to select applications with dribbble approval
 func (c *Likes) LikeShot(id int) (out *LikedShotOut, err error) {
 	body, err := c.call("POST", fmt.Sprintf("/shots/%d/like", id), nil)
 	if err != nil {
@@ -83,7 +83,7 @@ func (c *Likes) LikeShot(id int) (out *LikedShotOut, err error) {
 }
 
 // UnlikeShot with given id
-// Note: This is available only to select applications with our approval
+// Note: This is available only to select applications with dribbble approval
 // Unliking a shot requires the user to be authenticated with the write scope
 func (c *Likes) UnlikeShot(id int) error {
 	body, err := c.call("DELETE", fmt.Sprintf("/shots/%d/like", id), nil)

@@ -17,6 +17,8 @@ func main() {
 	// create new API client with config
 	c := dribbble.NewClient(cfg)
 
+	// ------------------------------------------------------------------------
+
 	// get currently logged in user
 	user, err := c.User.GetUser()
 	if err != nil {
@@ -25,14 +27,39 @@ func main() {
 
 	fmt.Printf("%s", user.String())
 
+	// ------------------------------------------------------------------------
+
 	// get all shots from logged in user
 	shots, err := c.Shots.GetShots()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	maxNum := len(*shots)
+	maxShotsNum := len(*shots)
 	for i, shot := range *shots {
-		fmt.Printf("num %d of %d\n%s", i+1, maxNum, shot.String())
+		fmt.Printf("num %d of %d\n%s", i+1, maxShotsNum, shot.String())
+	}
+
+	// ------------------------------------------------------------------------
+
+	// get specific shot
+	shot, err := c.Shots.GetShot(23275914)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%s", shot.String())
+
+	// ------------------------------------------------------------------------
+
+	// get popular shots
+	popularShots, err := c.Shots.GetPopularShots()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	maxPopShotsNum := len(*popularShots)
+	for i, shot := range *popularShots {
+		fmt.Printf("num %d of %d\n%s", i+1, maxPopShotsNum, shot.String())
 	}
 }

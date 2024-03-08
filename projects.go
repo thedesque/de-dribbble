@@ -3,6 +3,7 @@ package dribbble
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -27,6 +28,8 @@ type ProjectIn struct {
 	Description string `json:"description"`
 }
 
+// ------------------------------------------------------------------------
+
 // GetProjects of authenticated user
 func (c *Projects) GetProjects() (out *[]ProjectOut, err error) {
 	body, err := c.call("GET", "/user/projects", nil)
@@ -38,6 +41,22 @@ func (c *Projects) GetProjects() (out *[]ProjectOut, err error) {
 	err = json.NewDecoder(body).Decode(&out)
 	return
 }
+
+func (s *ProjectOut) String() string {
+	var sb strings.Builder
+
+	writeTitleString(&sb, "Project")
+	writeIfNotEmpty(&sb, "ID", fmt.Sprintf("%d", s.ID))
+	writeIfNotEmpty(&sb, "Name", s.Name)
+	writeIfNotEmpty(&sb, "Description", s.Description)
+	writeIfNotEmpty(&sb, "Shots Count", fmt.Sprintf("%d", s.ShotsCount))
+	writeIfNotEmpty(&sb, "Created At", s.CreatedAt.Format("Jan 2, 2006"))
+	writeIfNotEmpty(&sb, "Updated At", s.UpdatedAt.Format("Jan 2, 2006"))
+
+	return sb.String()
+}
+
+// ------------------------------------------------------------------------
 
 // CreateProject with given payload
 func (c *Projects) CreateProject(in *ProjectIn) (out *ProjectOut, err error) {

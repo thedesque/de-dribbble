@@ -8,6 +8,7 @@ import (
 
 // Jobs client
 // In order to use this part of API, you will need special token
+// https://developer.dribbble.com/v2/jobs/
 type Jobs struct {
 	*Client
 }

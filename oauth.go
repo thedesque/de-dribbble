@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -47,33 +48,35 @@ func newOauthConf() *oauth2.Config {
 	}
 }
 
-// OauthStart returns a token from a file if it exists, otherwise it starts a server to authenticate the user.
+// ------------------------------------------------------------------------
+
+// OauthStart checks if a token file exists and starts a server to authenticate
+// the user if it does not. It returns an error if there is a problem with the
+// token file or the server. On success it sets the token in the config and
+// writes the token to a file if writeTokenFile is true.
 func OauthStart(config *Config, filePath ...string) error {
 	// validate number of arguments
 	if len(filePath) > 1 {
 		return fmt.Errorf("expected at most one argument; got %d", len(filePath))
 	}
 
-	// determine file path
-	var path string
-	if len(filePath) == 0 {
-		path = tokenFile // use default token file if no file path provided
-	} else {
-		path = filePath[0]
+	f := tokenFile          // defaults
+	if len(filePath) == 1 { // use provided file path if available
+		f = filePath[0]
 	}
 
-	var token *oauth2.Token
-	var err error
 	// get token from file
-	token, err = OauthFile(path)
-	if err != nil && strings.Contains(err.Error(), "token file does not exist") {
-		// no token file so start server to authenticate user
-		token, err = OauthServer()
-		if err != nil {
-			return err
+	token, err := OauthFile(f)
+	if err != nil {
+		if strings.Contains(err.Error(), "token file does not exist") {
+			// no token file so start server to authenticate user
+			token, err = OauthServer()
+			if err != nil {
+				return err // error with auth server
+			}
+		} else {
+			return err // some other error
 		}
-	} else if err != nil {
-		return err
 	}
 
 	// add token to config
@@ -81,7 +84,7 @@ func OauthStart(config *Config, filePath ...string) error {
 
 	// write token to file
 	if config.Flags.TokenFile {
-		if err := writeTokenToFile(token); err != nil {
+		if err := writeTokenToFile(token, f); err != nil {
 			return fmt.Errorf("failed to write token to file: %v", err)
 		}
 	}
@@ -92,9 +95,8 @@ func OauthStart(config *Config, filePath ...string) error {
 // OauthFile returns a token from a file if it exists. If no file path is
 // provided or if the file does not exist, it returns nil.
 func OauthFile(filePath string) (*oauth2.Token, error) {
-	// checks if file path is empty
 	if filePath == "" {
-		return nil, fmt.Errorf("expected a file path; got %s", filePath)
+		return nil, errors.New("expected a file path; got empty string")
 	}
 
 	// checks if token file exists
@@ -122,7 +124,7 @@ func OauthFile(filePath string) (*oauth2.Token, error) {
 }
 
 // OauthServer starts a server to authenticate the user and returns a token.
-// It writes the token to a file if writeTokenFile is true.
+// It writes the token to a file if TokenFile flag is true.
 func OauthServer() (*oauth2.Token, error) {
 	conf := newOauthConf()
 
@@ -135,25 +137,26 @@ func OauthServer() (*oauth2.Token, error) {
 	sslcli := &http.Client{Transport: tr}
 	ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 
-	server := &http.Server{Addr: ":9000"}
+	urlComps, err := extractURLComponents(conf.RedirectURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract URL components: %v", err)
+	}
+
+	// set server
+	addr := fmt.Sprintf("%s:%s", urlComps.Domain, urlComps.Port)
+	server := &http.Server{Addr: addr}
 
 	// create a channel to receive the authorization code
 	codeChan := make(chan string)
 
-	http.HandleFunc("/oauth/callback", handleOauthCallback(codeChan))
+	http.HandleFunc(urlComps.Path, handleOauthCallback(codeChan))
 
 	// start server
-	errChan := make(chan error, 1)
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			errChan <- fmt.Errorf("failed to start server: %v", err)
-			return
+			log.Fatalf("failed to start server: %v", err)
 		}
-		errChan <- nil
 	}()
-	if err := <-errChan; err != nil {
-		return nil, err
-	}
 
 	// get the OAuth authorization URL
 	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
@@ -190,6 +193,8 @@ func OauthServer() (*oauth2.Token, error) {
 	return token, nil
 }
 
+// ------------------------------------------------------------------------
+
 func handleOauthCallback(codeChan chan string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		queryParts, _ := url.ParseQuery(r.URL.RawQuery)
@@ -207,9 +212,13 @@ func handleOauthCallback(codeChan chan string) func(w http.ResponseWriter, r *ht
 	}
 }
 
-func writeTokenToFile(token *oauth2.Token) error {
+func writeTokenToFile(token *oauth2.Token, filePath string) error {
+	if filePath == "" {
+		return errors.New("expected a file path; got empty string")
+	}
+
 	// create file with 0600 permissions
-	file, err := os.OpenFile("token.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("unable to create token file: %v", err)
 	}
@@ -221,4 +230,35 @@ func writeTokenToFile(token *oauth2.Token) error {
 	}
 
 	return nil
+}
+
+// ------------------------------------------------------------------------
+
+// urlComponents holds the extracted components of the redirect URL.
+type urlComponents struct {
+	Proto  string
+	Domain string
+	Port   string
+	Path   string
+}
+
+func extractURLComponents(urlStr string) (*urlComponents, error) {
+	parsedURL, err := url.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	components := &urlComponents{
+		Proto: parsedURL.Scheme,
+		Path:  parsedURL.Path,
+	}
+
+	// split host into domain and port
+	hostParts := strings.Split(parsedURL.Host, ":")
+	components.Domain = hostParts[0]
+	if len(hostParts) > 1 {
+		components.Port = hostParts[1]
+	}
+
+	return components, nil
 }

@@ -3,7 +3,10 @@ package dribbble
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 // Shots instance
@@ -101,6 +104,8 @@ type UpdateShotIn struct {
 	Tags        []string `json:"tags"`
 }
 
+// ------------------------------------------------------------------------
+
 // GetShots of authenticated user
 func (c *Shots) GetShots() (out *[]ShotOut, err error) {
 	body, err := c.call("GET", "/user/shots", nil)
@@ -112,6 +117,65 @@ func (c *Shots) GetShots() (out *[]ShotOut, err error) {
 	err = json.NewDecoder(body).Decode(&out)
 	return
 }
+
+// String method to convert ShotOut struct into a human-readable string,
+// with colored keys and omitting empty values.
+func (s ShotOut) String() string {
+	var sb strings.Builder
+	grey := color.New(color.FgHiBlack).SprintFunc()
+
+	writeIfNotEmpty := func(key, value string) {
+		if value != "" {
+			sb.WriteString(fmt.Sprintf("%s: %s\n", grey(key), value))
+		}
+	}
+
+	writeIfNotEmpty("ID", fmt.Sprintf("%d", s.ID))
+	writeIfNotEmpty("Title", s.Title)
+	writeIfNotEmpty("Description", s.Description)
+	writeIfNotEmpty("Dimensions", fmt.Sprintf("%dx%d", s.Width, s.Height))
+	writeIfNotEmpty("Published At", s.PublishedAt.Format("Jan 2, 2006"))
+	writeIfNotEmpty("Updated At", s.UpdatedAt.Format("Jan 2, 2006"))
+	writeIfNotEmpty("HTML URL", s.HTMLURL)
+	writeIfNotEmpty("Animated", fmt.Sprintf("%t", s.Animated))
+	if len(s.Tags) > 0 {
+		writeIfNotEmpty("Tags", strings.Join(s.Tags, ", "))
+	}
+
+	if len(s.Attachments) > 0 {
+		sb.WriteString(fmt.Sprintf("%s:\n", grey("Attachments")))
+		for _, attachment := range s.Attachments {
+			attachmentDetails := fmt.Sprintf("ID: %d, URL: %s, Size: %d bytes", attachment.ID, attachment.URL, attachment.Size)
+			writeIfNotEmpty("-", attachmentDetails)
+		}
+	}
+
+	if len(s.Projects) > 0 {
+		sb.WriteString(fmt.Sprintf("%s:\n", grey("Projects")))
+		for _, project := range s.Projects {
+			projectDetails := fmt.Sprintf("Name: %s, Description: %s, Shots Count: %d", project.Name, project.Description, project.ShotsCount)
+			writeIfNotEmpty("-", projectDetails)
+		}
+	}
+
+	if s.Team.ID != 0 {
+		sb.WriteString(fmt.Sprintf("%s:\n", grey("Team")))
+		teamDetails := fmt.Sprintf("Name: %s (%s), Bio: %s", s.Team.Name, s.Team.Login, s.Team.Bio)
+		writeIfNotEmpty("-", teamDetails)
+	}
+
+	if s.Video.ID != 0 {
+		sb.WriteString(fmt.Sprintf("%s:\n", grey("Video")))
+		videoDetails := fmt.Sprintf("Duration: %d seconds, URL: %s", s.Video.Duration, s.Video.URL)
+		writeIfNotEmpty("-", videoDetails)
+	}
+
+	writeIfNotEmpty("Low Profile", fmt.Sprintf("%t", s.LowProfile))
+
+	return sb.String()
+}
+
+// ------------------------------------------------------------------------
 
 // GetPopularShots overall
 // Note: This is available only to select applications with our approval
@@ -126,6 +190,8 @@ func (c *Shots) GetPopularShots() (out *[]PopularShotOut, err error) {
 	return
 }
 
+// ------------------------------------------------------------------------
+
 // GetShot with given id
 // This method returns only shots owned by the currently authenticated user
 func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
@@ -138,6 +204,8 @@ func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
 	err = json.NewDecoder(body).Decode(&out)
 	return
 }
+
+// ------------------------------------------------------------------------
 
 // UpdateShot with given id and payload
 // Updating a shot requires the user to be authenticated with the upload scope

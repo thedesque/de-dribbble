@@ -13,34 +13,34 @@ type Likes struct {
 
 // LikeOut response structure
 type LikeOut struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int       `json:"id,omitempty" toml:"id,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" toml:"created_at"`
 	Shot      struct {
-		ID          int    `json:"id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
+		ID          int    `json:"id,omitempty" toml:"id,omitempty"`
+		Title       string `json:"title,omitempty" toml:"title,omitempty"`
+		Description string `json:"description,omitempty" toml:"description,omitempty"`
 		Images      struct {
-			Hidpi  any    `json:"hidpi"`
-			Normal string `json:"normal"`
-			Teaser string `json:"teaser"`
-		} `json:"images"`
-		PublishedAt time.Time `json:"published_at"`
-		HTMLURL     string    `json:"html_url"`
-		Height      int       `json:"height"`
-		Width       int       `json:"width"`
-	} `json:"shot"`
+			Hidpi  any    `json:"hidpi,omitempty" toml:"hidpi,omitempty"`
+			Normal string `json:"normal,omitempty" toml:"normal,omitempty"`
+			Teaser string `json:"teaser,omitempty" toml:"teaser,omitempty"`
+		} `json:"images,omitempty" toml:"images,omitempty"`
+		PublishedAt time.Time `json:"published_at,omitempty" toml:"published_at"`
+		HTMLURL     string    `json:"html_url,omitempty" toml:"htmlurl,omitempty"`
+		Height      int       `json:"height,omitempty" toml:"height,omitempty"`
+		Width       int       `json:"width,omitempty" toml:"width,omitempty"`
+	} `json:"shot,omitempty" toml:"shot"`
 	User struct {
-		ID      int    `json:"id"`
-		Name    string `json:"name"`
-		Login   string `json:"login"`
-		HTMLURL string `json:"html_url"`
-	} `json:"user"`
+		ID      int    `json:"id,omitempty" toml:"id,omitempty"`
+		Name    string `json:"name,omitempty" toml:"name,omitempty"`
+		Login   string `json:"login,omitempty" toml:"login,omitempty"`
+		HTMLURL string `json:"html_url,omitempty" toml:"htmlurl,omitempty"`
+	} `json:"user,omitempty" toml:"user,omitempty"`
 }
 
 // LikedShotOut response structure
 type LikedShotOut struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int       `json:"id,omitempty" toml:"id,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" toml:"created_at"`
 }
 
 // GetLikes returns list of authenticated user’s liked shots

@@ -52,14 +52,11 @@ func main() {
 
 	// ------------------------------------------------------------------------
 
-	// get popular shots
-	popularShots, err := c.Shots.GetPopularShots()
+	// example toml output
+	shotTomlString, err := shot.ToToml()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	maxPopShotsNum := len(*popularShots)
-	for i, shot := range *popularShots {
-		fmt.Printf("num %d of %d\n%s", i+1, maxPopShotsNum, shot.String())
-	}
+	fmt.Printf("%s", shotTomlString)
 }

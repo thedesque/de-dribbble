@@ -14,12 +14,12 @@ type Projects struct {
 
 // ProjectOut response structure
 type ProjectOut struct {
-	ID          int       `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	ShotsCount  int       `json:"shots_count"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID          int       `json:"id,omitempty" toml:"id,omitempty"`
+	Name        string    `json:"name,omitempty" toml:"name,omitempty"`
+	Description string    `json:"description,omitempty" toml:"description,omitempty"`
+	ShotsCount  int       `json:"shots_count,omitempty" toml:"shots_count,omitempty"`
+	CreatedAt   time.Time `json:"created_at,omitempty" toml:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty" toml:"updated_at"`
 }
 
 // ProjectIn payload structure
@@ -54,6 +54,10 @@ func (s *ProjectOut) String() string {
 	writeIfNotEmpty(&sb, "Updated At", s.UpdatedAt.Format("Jan 2, 2006"))
 
 	return sb.String()
+}
+
+func (out *ProjectOut) ToToml() (string, error) {
+	return toTomlString(out)
 }
 
 // ------------------------------------------------------------------------

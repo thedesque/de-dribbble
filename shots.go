@@ -14,85 +14,85 @@ type Shots struct {
 
 // ShotOut single schema
 type ShotOut struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Width       int    `json:"width"`
-	Height      int    `json:"height"`
+	ID          int    `json:"id,omitempty" toml:"id,omitempty"`
+	Title       string `json:"title,omitempty" toml:"title,omitempty"`
+	Description string `json:"description,omitempty" toml:"description,omitempty"`
+	Width       int    `json:"width,omitempty" toml:"width,omitempty"`
+	Height      int    `json:"height,omitempty" toml:"height,omitempty"`
 	Images      struct {
-		Hidpi  any    `json:"hidpi"`
-		Normal string `json:"normal"`
-		Teaser string `json:"teaser"`
-	} `json:"images"`
-	PublishedAt time.Time `json:"published_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	HTMLURL     string    `json:"html_url"`
-	Animated    bool      `json:"animated"`
-	Tags        []string  `json:"tags"`
+		Hidpi  any    `json:"hidpi,omitempty" toml:"hidpi,omitempty"`
+		Normal string `json:"normal,omitempty" toml:"normal,omitempty"`
+		Teaser string `json:"teaser,omitempty" toml:"teaser,omitempty"`
+	} `json:"images,omitempty" toml:"images,omitempty"`
+	PublishedAt time.Time `json:"published_at,omitempty" toml:"published_at"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+	HTMLURL     string    `json:"html_url,omitempty" toml:"html_url,omitempty"`
+	Animated    bool      `json:"animated,omitempty" toml:"animated"`
+	Tags        []string  `json:"tags,omitempty" toml:"tags,omitempty"`
 	Attachments []struct {
-		ID           int       `json:"id"`
-		URL          string    `json:"url"`
-		ThumbnailURL string    `json:"thumbnail_url"`
-		Size         int       `json:"size"`
-		ContentType  string    `json:"content_type"`
-		CreatedAt    time.Time `json:"created_at"`
-	} `json:"attachments"`
+		ID           int       `json:"id,omitempty" toml:"id,omitempty"`
+		URL          string    `json:"url,omitempty" toml:"url,omitempty"`
+		ThumbnailURL string    `json:"thumbnail_url,omitempty" toml:"thumbnail_url,omitempty"`
+		Size         int       `json:"size,omitempty" toml:"size,omitempty"`
+		ContentType  string    `json:"content_type,omitempty" toml:"content_type,omitempty"`
+		CreatedAt    time.Time `json:"created_at,omitempty" toml:"created_at"`
+	} `json:"attachments,omitempty" toml:"attachments,omitempty"`
 	Projects []struct {
-		ID          int       `json:"id"`
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
-		ShotsCount  int       `json:"shots_count"`
-		CreatedAt   time.Time `json:"created_at"`
-		UpdatedAt   time.Time `json:"updated_at"`
-	} `json:"projects"`
+		ID          int       `json:"id,omitempty" toml:"id,omitempty"`
+		Name        string    `json:"name,omitempty" toml:"name,omitempty"`
+		Description string    `json:"description,omitempty" toml:"description,omitempty"`
+		ShotsCount  int       `json:"shots_count,omitempty" toml:"shots_count,omitempty"`
+		CreatedAt   time.Time `json:"created_at,omitempty" toml:"created_at"`
+		UpdatedAt   time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+	} `json:"projects,omitempty" toml:"projects,omitempty"`
 	Team struct {
-		ID        int    `json:"id"`
-		Name      string `json:"name"`
-		Login     string `json:"login"`
-		HTMLURL   string `json:"html_url"`
-		AvatarURL string `json:"avatar_url"`
-		Bio       string `json:"bio"`
-		Location  string `json:"location"`
+		ID        int    `json:"id,omitempty" toml:"id,omitempty"`
+		Name      string `json:"name,omitempty" toml:"name,omitempty"`
+		Login     string `json:"login,omitempty" toml:"login,omitempty"`
+		HTMLURL   string `json:"html_url,omitempty" toml:"html_url,omitempty"`
+		AvatarURL string `json:"avatar_url,omitempty" toml:"avatar_url,omitempty"`
+		Bio       string `json:"bio,omitempty" toml:"bio,omitempty"`
+		Location  string `json:"location,omitempty" toml:"location,omitempty"`
 		Links     struct {
-			Web     string `json:"web"`
-			Twitter string `json:"twitter"`
-		} `json:"links"`
-		Type      string    `json:"type"`
-		CreatedAt time.Time `json:"created_at"`
-		UpdatedAt time.Time `json:"updated_at"`
-	} `json:"team"`
+			Web     string `json:"web,omitempty" toml:"web,omitempty"`
+			Twitter string `json:"twitter,omitempty" toml:"twitter,omitempty"`
+		} `json:"links,omitempty" toml:"links,omitempty"`
+		Type      string    `json:"type,omitempty" toml:"type,omitempty"`
+		CreatedAt time.Time `json:"created_at,omitempty" toml:"created_at"`
+		UpdatedAt time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+	} `json:"team,omitempty" toml:"team,omitempty"`
 	Video struct {
-		ID               int       `json:"id"`
-		Duration         int       `json:"duration"`
-		VideoFileName    string    `json:"video_file_name"`
-		VideoFileSize    int       `json:"video_file_size"`
-		Width            int       `json:"width"`
-		Height           int       `json:"height"`
-		Silent           bool      `json:"silent"`
-		CreatedAt        time.Time `json:"created_at"`
-		UpdatedAt        time.Time `json:"updated_at"`
-		URL              string    `json:"url"`
-		SmallPreviewURL  string    `json:"small_preview_url"`
-		LargePreviewURL  string    `json:"large_preview_url"`
-		XlargePreviewURL string    `json:"xlarge_preview_url"`
-	} `json:"video"`
-	LowProfile bool `json:"low_profile"`
+		ID               int       `json:"id,omitempty" toml:"id,omitempty"`
+		Duration         int       `json:"duration,omitempty" toml:"duration,omitempty"`
+		VideoFileName    string    `json:"video_file_name,omitempty" toml:"video_file_name,omitempty"`
+		VideoFileSize    int       `json:"video_file_size,omitempty" toml:"video_file_size,omitempty"`
+		Width            int       `json:"width,omitempty" toml:"width,omitempty"`
+		Height           int       `json:"height,omitempty" toml:"height,omitempty"`
+		Silent           bool      `json:"silent,omitempty" toml:"silent"`
+		CreatedAt        time.Time `json:"created_at,omitempty" toml:"created_at"`
+		UpdatedAt        time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+		URL              string    `json:"url,omitempty" toml:"url,omitempty"`
+		SmallPreviewURL  string    `json:"small_preview_url,omitempty" toml:"small_preview_url,omitempty"`
+		LargePreviewURL  string    `json:"large_preview_url,omitempty" toml:"large_preview_url,omitempty"`
+		XlargePreviewURL string    `json:"xlarge_preview_url,omitempty" toml:"xlarge_preview_url,omitempty"`
+	} `json:"video,omitempty" toml:"video,omitempty"`
+	LowProfile bool `json:"low_profile,omitempty" toml:"low_profile"`
 }
 
 // PopularShotOut schema
 type PopularShotOut struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID          int    `json:"id,omitempty" toml:"id,omitempty"`
+	Title       string `json:"title,omitempty" toml:"title,omitempty"`
+	Description string `json:"description,omitempty" toml:"description,omitempty"`
 	Images      struct {
-		Hidpi  any    `json:"hidpi"`
-		Normal string `json:"normal"`
-		Teaser string `json:"teaser"`
-	} `json:"images"`
-	PublishedAt time.Time `json:"published_at"`
-	HTMLURL     string    `json:"html_url"`
-	Height      int       `json:"height"`
-	Width       int       `json:"width"`
+		Hidpi  any    `json:"hidpi,omitempty" toml:"hidpi,omitempty"`
+		Normal string `json:"normal,omitempty" toml:"normal,omitempty"`
+		Teaser string `json:"teaser,omitempty" toml:"teaser,omitempty"`
+	} `json:"images,omitempty" toml:"images,omitempty"`
+	PublishedAt time.Time `json:"published_at,omitempty" toml:"published_at"`
+	HTMLURL     string    `json:"html_url,omitempty" toml:"htmlurl,omitempty"`
+	Height      int       `json:"height,omitempty" toml:"height,omitempty"`
+	Width       int       `json:"width,omitempty" toml:"width,omitempty"`
 }
 
 // UpdateShotIn for updating shot
@@ -168,6 +168,25 @@ func (s *ShotOut) String() string {
 	return sb.String()
 }
 
+func (out *ShotOut) ToToml() (string, error) {
+	return toTomlString(out)
+}
+
+// ------------------------------------------------------------------------
+
+// GetShot with given id
+// This method returns only shots owned by the currently authenticated user
+func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
+	body, err := c.call("GET", fmt.Sprintf("/shots/%d", id), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	err = json.NewDecoder(body).Decode(&out)
+	return
+}
+
 // ------------------------------------------------------------------------
 
 // GetPopularShots overall
@@ -200,19 +219,8 @@ func (s *PopularShotOut) String() string {
 	return sb.String()
 }
 
-// ------------------------------------------------------------------------
-
-// GetShot with given id
-// This method returns only shots owned by the currently authenticated user
-func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
-	body, err := c.call("GET", fmt.Sprintf("/shots/%d", id), nil)
-	if err != nil {
-		return nil, err
-	}
-	defer body.Close()
-
-	err = json.NewDecoder(body).Decode(&out)
-	return
+func (out *PopularShotOut) ToToml() (string, error) {
+	return toTomlString(out)
 }
 
 // ------------------------------------------------------------------------

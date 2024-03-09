@@ -15,17 +15,17 @@ type Jobs struct {
 
 // JobOut schema
 type JobOut struct {
-	ID               int       `json:"id"`
-	OrganizationName string    `json:"organization_name"`
-	Title            string    `json:"title"`
-	Location         string    `json:"location"`
-	URL              string    `json:"url"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	Active           bool      `json:"active"`
-	StartsAt         time.Time `json:"starts_at"`
-	EndsAt           time.Time `json:"ends_at"`
-	Team             any       `json:"team"`
+	ID               int       `json:"id,omitempty" toml:"id,omitempty"`
+	OrganizationName string    `json:"organization_name,omitempty" toml:"organization_name,omitempty"`
+	Title            string    `json:"title,omitempty" toml:"title,omitempty"`
+	Location         string    `json:"location,omitempty" toml:"location,omitempty"`
+	URL              string    `json:"url,omitempty" toml:"url,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty" toml:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+	Active           bool      `json:"active,omitempty" toml:"active"`
+	StartsAt         time.Time `json:"starts_at,omitempty" toml:"starts_at"`
+	EndsAt           time.Time `json:"ends_at,omitempty" toml:"ends_at"`
+	Team             any       `json:"team,omitempty" toml:"team,omitempty"`
 }
 
 // JobIn schema

@@ -6,6 +6,7 @@ require (
 	github.com/cli/browser v1.3.0
 	github.com/fatih/color v1.16.0
 	github.com/joho/godotenv v1.5.1
+	github.com/pelletier/go-toml/v2 v2.1.1
 	golang.org/x/oauth2 v0.17.0
 )
 

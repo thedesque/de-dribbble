@@ -14,12 +14,12 @@ type Projects struct {
 
 // ProjectOut response structure
 type ProjectOut struct {
-	ID          int       `json:"id,omitempty" toml:"id,omitempty"`
-	Name        string    `json:"name,omitempty" toml:"name,omitempty"`
-	Description string    `json:"description,omitempty" toml:"description,omitempty"`
-	ShotsCount  int       `json:"shots_count,omitempty" toml:"shots_count,omitempty"`
-	CreatedAt   time.Time `json:"created_at,omitempty" toml:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty" toml:"updated_at"`
+	ID          int       `json:"id,omitempty" toml:"id,omitempty" yaml:"id,omitempty"`
+	Name        string    `json:"name,omitempty" toml:"name,omitempty" yaml:"name,omitempty"`
+	Description string    `json:"description,omitempty" toml:"description,omitempty" yaml:"description,omitempty"`
+	ShotsCount  int       `json:"shots_count,omitempty" toml:"shots_count,omitempty" yaml:"shots_count,omitempty"`
+	CreatedAt   time.Time `json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 }
 
 // ProjectIn payload structure
@@ -58,6 +58,10 @@ func (s *ProjectOut) String() string {
 
 func (out *ProjectOut) ToToml() (string, error) {
 	return toTomlString(out)
+}
+
+func (out *ProjectOut) ToYaml() (string, error) {
+	return toYamlString(out)
 }
 
 // ------------------------------------------------------------------------

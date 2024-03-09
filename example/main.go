@@ -58,5 +58,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%s", shotTomlString)
+	fmt.Printf("\n%s", shotTomlString)
+
+	// ------------------------------------------------------------------------
+
+	// example yaml output
+	shotYamlString, err := shot.ToYaml()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("\n%s", shotYamlString)
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/pelletier/go-toml/v2"
+	"gopkg.in/yaml.v3"
 )
 
 // writeIfNotEmpty writes formatted key-value pairs to a StringBuilder if the value is not empty.
@@ -31,6 +32,15 @@ func formatTags(tags []string) string {
 
 func toTomlString(v any) (string, error) {
 	buf, err := toml.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+
+	return string(buf), nil
+}
+
+func toYamlString(v any) (string, error) {
+	buf, err := yaml.Marshal(v)
 	if err != nil {
 		return "", err
 	}

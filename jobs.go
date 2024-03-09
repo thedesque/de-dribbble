@@ -15,17 +15,17 @@ type Jobs struct {
 
 // JobOut schema
 type JobOut struct {
-	ID               int       `json:"id,omitempty" toml:"id,omitempty"`
-	OrganizationName string    `json:"organization_name,omitempty" toml:"organization_name,omitempty"`
-	Title            string    `json:"title,omitempty" toml:"title,omitempty"`
-	Location         string    `json:"location,omitempty" toml:"location,omitempty"`
-	URL              string    `json:"url,omitempty" toml:"url,omitempty"`
-	CreatedAt        time.Time `json:"created_at,omitempty" toml:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at,omitempty" toml:"updated_at"`
-	Active           bool      `json:"active,omitempty" toml:"active"`
-	StartsAt         time.Time `json:"starts_at,omitempty" toml:"starts_at"`
-	EndsAt           time.Time `json:"ends_at,omitempty" toml:"ends_at"`
-	Team             any       `json:"team,omitempty" toml:"team,omitempty"`
+	ID               int       `json:"id,omitempty" toml:"id,omitempty" yaml:"id,omitempty"`
+	OrganizationName string    `json:"organization_name,omitempty" toml:"organization_name,omitempty" yaml:"organization_name,omitempty"`
+	Title            string    `json:"title,omitempty" toml:"title,omitempty" yaml:"title,omitempty"`
+	Location         string    `json:"location,omitempty" toml:"location,omitempty" yaml:"location,omitempty"`
+	URL              string    `json:"url,omitempty" toml:"url,omitempty" yaml:"url,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	UpdatedAt        time.Time `json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	Active           bool      `json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
+	StartsAt         time.Time `json:"starts_at,omitempty" toml:"starts_at" yaml:"starts_at,omitempty"`
+	EndsAt           time.Time `json:"ends_at,omitempty" toml:"ends_at" yaml:"ends_at,omitempty"`
+	Team             any       `json:"team,omitempty" toml:"team,omitempty" yaml:"team,omitempty"`
 }
 
 // JobIn schema

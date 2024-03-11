@@ -19,24 +19,24 @@ import (
 
 // Dribbble scopes
 const (
-	Public = "public"
-	Upload = "upload"
+	public = "public"
+	upload = "upload"
 )
 
 // Default token file
 const tokenFile = "token.json"
 
-// Endpoint is Dribbbles's OAuth 2.0 default endpoint.
-var Endpoint = oauth2.Endpoint{
+// endpoint is Dribbbles's OAuth 2.0 default endpoint.
+var endpoint = oauth2.Endpoint{
 	AuthURL:  "https://dribbble.com/oauth/authorize",
 	TokenURL: "https://dribbble.com/oauth/token",
 }
 
 // newOauthConf returns a new oauth2.Config with values from environment variables.
 func newOauthConf() *oauth2.Config {
-	scope := []string{Public}
+	scope := []string{public}
 	if os.Getenv("WRITE_SCOPE") == "true" {
-		scope = append(scope, Upload)
+		scope = append(scope, upload)
 	}
 
 	return &oauth2.Config{
@@ -44,7 +44,7 @@ func newOauthConf() *oauth2.Config {
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
 		RedirectURL:  os.Getenv("REDIRECT_URL"),
 		Scopes:       scope,
-		Endpoint:     Endpoint,
+		Endpoint:     endpoint,
 	}
 }
 

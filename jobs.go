@@ -40,36 +40,36 @@ type JobIn struct {
 
 // GetJob with given id
 func (c *Jobs) GetJob(id int) (out *JobOut, err error) {
-	body, err := c.call("GET", fmt.Sprintf("/jobs/%d", id), nil)
+	resp, err := c.call("GET", fmt.Sprintf("/jobs/%d", id), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // CreateJob with given payload
 func (c *Jobs) CreateJob(in *JobIn) (out *JobOut, err error) {
-	body, err := c.call("POST", "/jobs/", in)
+	resp, err := c.call("POST", "/jobs/", in)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // UpdateJob with given id and payload
 func (c *Jobs) UpdateJob(id int, in *JobIn) (out *JobOut, err error) {
-	body, err := c.call("PUT", fmt.Sprintf("/jobs/%d", id), in)
+	resp, err := c.call("PUT", fmt.Sprintf("/jobs/%d", id), in)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }

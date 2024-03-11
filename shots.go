@@ -104,16 +104,38 @@ type UpdateShotIn struct {
 
 // ------------------------------------------------------------------------
 
-// GetShots of authenticated user
-func (c *Shots) GetShots() (out *[]ShotOut, err error) {
-	body, err := c.call("GET", "/user/shots", nil)
-	if err != nil {
-		return nil, err
-	}
-	defer body.Close()
+// GetShots of authenticated user. Set page to 1 for the first page of results.
+// If traverse is true, it will traverse all pages and return all shots.
+func (c *Shots) GetShots(page int, traverse bool) ([]*ShotOut, error) {
+	var shots []*ShotOut
 
-	err = json.NewDecoder(body).Decode(&out)
-	return
+	for {
+		path := "/user/shots" + paginationQueryString(page, 100)
+
+		resp, err := c.call("GET", path, nil)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.body.Close()
+
+		var pageShots []*ShotOut
+		err = json.NewDecoder(resp.body).Decode(&pageShots)
+		if err != nil {
+			return nil, err
+		}
+
+		shots = append(shots, pageShots...)
+
+		// check if we need to traverse and if there is a next page
+		if !traverse || resp.pagination.nextPage == 0 {
+			break
+		}
+
+		// set up for the next iteration
+		page = resp.pagination.nextPage
+	}
+
+	return shots, nil
 }
 
 // String method to convert ShotOut struct into a human-readable string,
@@ -181,13 +203,13 @@ func (out *ShotOut) ToYaml() (string, error) {
 // GetShot with given id
 // This method returns only shots owned by the currently authenticated user
 func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
-	body, err := c.call("GET", fmt.Sprintf("/shots/%d", id), nil)
+	resp, err := c.call("GET", fmt.Sprintf("/shots/%d", id), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
@@ -195,14 +217,14 @@ func (c *Shots) GetShot(id int) (out *ShotOut, err error) {
 
 // GetPopularShots overall
 // Note: This is available only to select applications with dribbble approval
-func (c *Shots) GetPopularShots() (out *[]PopularShotOut, err error) {
-	body, err := c.call("GET", "/popular_shots", nil)
+func (c *Shots) GetPopularShots() (out []*PopularShotOut, err error) {
+	resp, err := c.call("GET", "/popular_shots", nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
@@ -233,13 +255,13 @@ func (out *PopularShotOut) ToToml() (string, error) {
 // Updating a shot requires the user to be authenticated with the upload scope
 // The authenticated user must also own the shot
 func (c *Shots) UpdateShot(id int, in *UpdateShotIn) (out *ShotOut, err error) {
-	body, err := c.call("PUT", fmt.Sprintf("/shots/%d", id), in)
+	resp, err := c.call("PUT", fmt.Sprintf("/shots/%d", id), in)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
@@ -247,11 +269,11 @@ func (c *Shots) UpdateShot(id int, in *UpdateShotIn) (out *ShotOut, err error) {
 // Deleting a shot requires the user to be authenticated with the upload scope
 // The authenticated user must also own the shot
 func (c *Shots) DeleteShot(id int) error {
-	body, err := c.call("DELETE", fmt.Sprintf("/shots/%d", id), nil)
+	resp, err := c.call("DELETE", fmt.Sprintf("/shots/%d", id), nil)
 	if err != nil {
 		return err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
 	return nil
 }

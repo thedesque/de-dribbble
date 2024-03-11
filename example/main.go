@@ -30,25 +30,31 @@ func main() {
 	// ------------------------------------------------------------------------
 
 	// get all shots from logged in user
-	shots, err := c.Shots.GetShots()
+	// 1 is the first page of paginated results, true to traverse all pages
+	shots, err := c.Shots.GetShots(1, true)
 	if err != nil {
 		log.Fatal(err)
 	}
+	// checks if we have any shots
+	shotCount := len(shots)
+	if shotCount == 0 {
+		log.Fatal("no shots found")
+	}
 
-	maxShotsNum := len(*shots)
-	for i, shot := range *shots {
-		fmt.Printf("num %d of %d\n%s", i+1, maxShotsNum, shot.String())
+	for i, shot := range shots {
+		fmt.Printf("num %d of %d\n%s", i+1, shotCount, shot.String())
 	}
 
 	// ------------------------------------------------------------------------
 
 	// get specific shot
-	shot, err := c.Shots.GetShot(23275914)
+	lastShot := shots[shotCount-1] // in terms of shot date, probably oldest from paginated results
+	shot, err := c.Shots.GetShot(lastShot.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%s", shot.String())
+	fmt.Printf("\n--SPECIFIC SHOT--\n%s", shot.String())
 
 	// ------------------------------------------------------------------------
 
@@ -58,7 +64,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("\n%s", shotTomlString)
+	fmt.Printf("\n--TOML--\n%s", shotTomlString)
 
 	// ------------------------------------------------------------------------
 
@@ -68,5 +74,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("\n%s", shotYamlString)
+	fmt.Printf("\n--YAML--\n%s", shotYamlString)
 }

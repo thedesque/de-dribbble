@@ -45,40 +45,40 @@ type LikedShotOut struct {
 
 // GetLikes returns list of authenticated user’s liked shots
 // Note: This is available only to select applications with dribbble approval
-func (c *Likes) GetLikes() (out *[]LikeOut, err error) {
-	body, err := c.call("GET", "/user/likes", nil)
+func (c *Likes) GetLikes() (out []*LikeOut, err error) {
+	resp, err := c.call("GET", "/user/likes", nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // GetShotLike checks if you like a shot
 // Note: This is available only to select applications with dribbble approval
 func (c *Likes) GetShotLike(id int) (out *LikedShotOut, err error) {
-	body, err := c.call("GET", fmt.Sprintf("/shots/%d/like", id), nil)
+	resp, err := c.call("GET", fmt.Sprintf("/shots/%d/like", id), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // LikeShot with given id
 // Note: This is available only to select applications with dribbble approval
 func (c *Likes) LikeShot(id int) (out *LikedShotOut, err error) {
-	body, err := c.call("POST", fmt.Sprintf("/shots/%d/like", id), nil)
+	resp, err := c.call("POST", fmt.Sprintf("/shots/%d/like", id), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
@@ -86,11 +86,11 @@ func (c *Likes) LikeShot(id int) (out *LikedShotOut, err error) {
 // Note: This is available only to select applications with dribbble approval
 // Unliking a shot requires the user to be authenticated with the write scope
 func (c *Likes) UnlikeShot(id int) error {
-	body, err := c.call("DELETE", fmt.Sprintf("/shots/%d/like", id), nil)
+	resp, err := c.call("DELETE", fmt.Sprintf("/shots/%d/like", id), nil)
 	if err != nil {
 		return err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
 	return nil
 }

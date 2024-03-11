@@ -50,13 +50,13 @@ type UserOut struct {
 
 // GetUser which is currenlty logged in
 func (c *User) GetUser() (out *UserOut, err error) {
-	body, err := c.call("GET", "/user", nil)
+	resp, err := c.call("GET", "/user", nil)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 

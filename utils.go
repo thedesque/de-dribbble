@@ -47,3 +47,18 @@ func toYamlString(v any) (string, error) {
 
 	return string(buf), nil
 }
+
+// ------------------------------------------------------------------------
+
+// paginationQueryString returns a query string for setting the page and per_page parameters.
+func paginationQueryString(page, perPage int) string {
+	if page <= 0 {
+		page = 1
+	}
+
+	if perPage <= 0 {
+		perPage = 100
+	}
+
+	return fmt.Sprintf("?page=%d&per_page=%d", page, perPage)
+}

@@ -30,16 +30,38 @@ type ProjectIn struct {
 
 // ------------------------------------------------------------------------
 
-// GetProjects of authenticated user
-func (c *Projects) GetProjects() (out *[]ProjectOut, err error) {
-	body, err := c.call("GET", "/user/projects", nil)
-	if err != nil {
-		return nil, err
-	}
-	defer body.Close()
+// GetProjects of authenticated user. Set page to 1 to get the first page of results.
+// If traverse is true, it will traverse all pages and return all projects.
+func (c *Projects) GetProjects(page int, traverse bool) ([]*ProjectOut, error) {
+	var projects []*ProjectOut
 
-	err = json.NewDecoder(body).Decode(&out)
-	return
+	for {
+		path := "/user/projects" + paginationQueryString(page, 100)
+
+		resp, err := c.call("GET", path, nil)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.body.Close()
+
+		var pageProjects []*ProjectOut
+		err = json.NewDecoder(resp.body).Decode(&pageProjects)
+		if err != nil {
+			return nil, err
+		}
+
+		projects = append(projects, pageProjects...)
+
+		// check if we need to traverse and if there is a next page
+		if !traverse || resp.pagination.nextPage == 0 {
+			break
+		}
+
+		// set up for the next iteration
+		page = resp.pagination.nextPage
+	}
+
+	return projects, nil
 }
 
 func (s *ProjectOut) String() string {
@@ -68,35 +90,35 @@ func (out *ProjectOut) ToYaml() (string, error) {
 
 // CreateProject with given payload
 func (c *Projects) CreateProject(in *ProjectIn) (out *ProjectOut, err error) {
-	body, err := c.call("POST", "/projects", in)
+	resp, err := c.call("POST", "/projects", in)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // UpdateProject with given id
 func (c *Projects) UpdateProject(id int, in *ProjectIn) (out *ProjectOut, err error) {
-	body, err := c.call("PUT", fmt.Sprintf("/projects/%d", id), in)
+	resp, err := c.call("PUT", fmt.Sprintf("/projects/%d", id), in)
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
-	err = json.NewDecoder(body).Decode(&out)
+	err = json.NewDecoder(resp.body).Decode(&out)
 	return
 }
 
 // DeleteProject with given id
 func (c *Projects) DeleteProject(id int) error {
-	body, err := c.call("DELETE", fmt.Sprintf("/projects/%d", id), nil)
+	resp, err := c.call("DELETE", fmt.Sprintf("/projects/%d", id), nil)
 	if err != nil {
 		return err
 	}
-	defer body.Close()
+	defer resp.body.Close()
 
 	return nil
 }

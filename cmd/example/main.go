@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	dribbble "github.com/thedesque.com/desqfolio"
+	dribbble "github.com/thedesque.com/de-dribbble"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 # Makefile for building Go application for multiple platforms
 
-GO_FILES="./example"
-BINARY_NAME="desqfolio"
+GO_FILES="./cmd/example"
+BINARY_NAME="de-dribbble"
 BIN_DIR=".builds"
 APP_DATA="./df_data"
 

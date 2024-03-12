@@ -1,4 +1,4 @@
-module github.com/thedesque.com/desqfolio
+module github.com/thedesque.com/de-dribbble
 
 go 1.21.7
 
@@ -8,6 +8,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/pelletier/go-toml/v2 v2.1.1
 	golang.org/x/oauth2 v0.17.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -18,5 +19,4 @@ require (
 	golang.org/x/sys v0.17.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

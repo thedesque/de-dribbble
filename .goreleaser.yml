@@ -1,4 +1,4 @@
-project_name: desqfolio
+project_name: de-dribbble
 
 dist: .builds
 
@@ -9,9 +9,9 @@ before:
 builds:
   - id: build_noncgo
     main: ./cmd
-    binary: desqfolio
+    binary: de-dribbble
     ldflags:
-      - -s -w -X github.com/thedesque/desqfolio.Version={{ .Version }}
+      - -s -w -X github.com/thedesque/de-dribbble.Version={{ .Version }}
     env:
       - CGO_ENABLED=0
     goos:

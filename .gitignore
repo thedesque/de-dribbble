@@ -32,7 +32,8 @@
 tmp/
 sample/
 
-# pocketbase data
+# output data
 .builds/
-pb_data/
-ui/dist/
+shots.yaml
+shots.yml
+shots.toml

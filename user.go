@@ -89,11 +89,3 @@ func (u UserOut) String() string {
 
 	return sb.String()
 }
-
-func (out *UserOut) ToToml() (string, error) {
-	return toTomlString(out)
-}
-
-func (out *UserOut) ToYaml() (string, error) {
-	return toYamlString(out)
-}

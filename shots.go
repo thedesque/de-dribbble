@@ -12,6 +12,11 @@ type Shots struct {
 	*Client
 }
 
+// ShotsWrapper contains a list of shots for marshalling/unmarshalling purposes
+type ShotsWrapper struct {
+	Slice []*ShotOut `json:"shots,omitempty" toml:"shots,omitempty" yaml:"shots,omitempty"`
+}
+
 // ShotOut single schema
 type ShotOut struct {
 	ID          int    `json:"id,omitempty" toml:"id,omitempty" yaml:"id,omitempty"`
@@ -106,7 +111,7 @@ type UpdateShotIn struct {
 
 // GetShots of authenticated user. Set page to 1 for the first page of results.
 // If traverse is true, it will traverse all pages and return all shots.
-func (c *Shots) GetShots(page int, traverse bool) ([]*ShotOut, error) {
+func (c *Shots) GetShots(page int, traverse bool) (*ShotsWrapper, error) {
 	var shots []*ShotOut
 
 	for {
@@ -135,7 +140,7 @@ func (c *Shots) GetShots(page int, traverse bool) ([]*ShotOut, error) {
 		page = resp.pagination.nextPage
 	}
 
-	return shots, nil
+	return &ShotsWrapper{Slice: shots}, nil
 }
 
 // String method to convert ShotOut struct into a human-readable string,
@@ -190,14 +195,6 @@ func (s *ShotOut) String() string {
 	return sb.String()
 }
 
-func (out *ShotOut) ToToml() (string, error) {
-	return toTomlString(out)
-}
-
-func (out *ShotOut) ToYaml() (string, error) {
-	return toYamlString(out)
-}
-
 // ------------------------------------------------------------------------
 
 // GetShot with given id
@@ -243,10 +240,6 @@ func (s *PopularShotOut) String() string {
 	writeIfNotEmpty(&sb, "Published At", s.PublishedAt.Format("Jan 2, 2006"))
 
 	return sb.String()
-}
-
-func (out *PopularShotOut) ToToml() (string, error) {
-	return toTomlString(out)
 }
 
 // ------------------------------------------------------------------------

@@ -30,25 +30,28 @@ func main() {
 	// ------------------------------------------------------------------------
 
 	// get all shots from logged in user
+	// returns a wrapped slice of shots and an error
 	// 1 is the first page of paginated results, true to traverse all pages
 	shots, err := c.Shots.GetShots(1, true)
 	if err != nil {
 		log.Fatal(err)
 	}
+	// access underlying slice of shots
 	// checks if we have any shots
-	shotCount := len(shots)
+	shotCount := len(shots.Slice)
 	if shotCount == 0 {
 		log.Fatal("no shots found")
 	}
-
-	for i, shot := range shots {
+	// range the slice of single ShotOut struct to do something
+	for i, shot := range shots.Slice {
 		fmt.Printf("num %d of %d\n%s", i+1, shotCount, shot.String())
 	}
 
 	// ------------------------------------------------------------------------
 
-	// get specific shot
-	lastShot := shots[shotCount-1] // in terms of shot date, probably oldest from paginated results
+	// get specific shot via API
+	// could use GetShots and search slice result to reduce API calls
+	lastShot := shots.Slice[shotCount-1] // in terms of shot date, probably oldest from paginated results
 	shot, err := c.Shots.GetShot(lastShot.ID)
 	if err != nil {
 		log.Fatal(err)
@@ -58,21 +61,43 @@ func main() {
 
 	// ------------------------------------------------------------------------
 
-	// example toml output
-	shotTomlString, err := shot.ToToml()
+	// example shot to toml stdout
+	tomlShot, err := dribbble.ToToml(shot)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("\n--TOML--\n%s", shotTomlString)
+	fmt.Printf("\n--TOML--\n%s", tomlShot)
+
+	// example shots to toml to os file
+	tomlShots, err := dribbble.ToToml(shots)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = dribbble.ToFile("shots.toml", tomlShots)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// ------------------------------------------------------------------------
 
-	// example yaml output
-	shotYamlString, err := shot.ToYaml()
+	// example shot to yaml stdout
+	yamlShot, err := dribbble.ToYaml(shot)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("\n--YAML--\n%s", shotYamlString)
+	fmt.Printf("\n--YAML--\n%s", yamlShot)
+
+	// example shots to yaml to os file
+	yamlShots, err := dribbble.ToYaml(shots)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = dribbble.ToFile("shots.yaml", yamlShots)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

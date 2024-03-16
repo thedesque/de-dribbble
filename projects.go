@@ -78,14 +78,6 @@ func (s *ProjectOut) String() string {
 	return sb.String()
 }
 
-func (out *ProjectOut) ToToml() (string, error) {
-	return toTomlString(out)
-}
-
-func (out *ProjectOut) ToYaml() (string, error) {
-	return toYamlString(out)
-}
-
 // ------------------------------------------------------------------------
 
 // CreateProject with given payload
